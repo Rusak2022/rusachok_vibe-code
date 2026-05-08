@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вайб-кодинг | Русачок и Ко - Создание сайтов и ботов с магией</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a0f2e, #0a0515);
+            color: #e0d0ff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            /* Animated gradient background */
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(42, 255, 158, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(204, 102, 255, 0.1) 0%, transparent 20%),
+                linear-gradient(135deg, #1a0f2e, #0a0515);
+            background-size: 400% 400%;
+            animation: gradientShift 18s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Canvas particles background */
+        #particlesCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Logo styling */
+        .logo {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            color: #2aff9e;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .logo:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .tooltip {
+            position: absolute;
+            top: calc(100% + 5px);
+            left: 0;
+            background: rgba(10, 5, 20, 0.9);
+            color: #e0d0ff;
+            padding: 6px 10px;
+            border-radius: 5px;
+            white-space: nowrap;
+            font-size: 0.9rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            border: 1px solid rgba(204, 102, 255, 0.5);
+            box-shadow: 0 0 15px rgba(204, 102, 255, 0.5);
+            z-index: 101;
+        }
+
+        .rabbit-icon {
+            width: 24px;
+            height: 24px;
+            fill: #2aff9e;
+        }
+
+        /* Navigation styling */
+        .nav {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .nav-link {
+            color: #cc66ff;
+            text-decoration: none;
+            font-size: 1.1rem;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            background: rgba(25, 15, 40, 0.4);
+            border: 1px solid rgba(204, 102, 255, 0.3);
+        }
+
+        .nav-link:hover {
+            background: rgba(204, 102, 255, 0.2);
+            box-shadow: 0 0 15px rgba(204, 102, 255, 0.5);
+        }
+
+        /* Parallax layers */
+        .parallax-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .parallax-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .rune {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.15;
+            animation: float 25s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(20px, 30px) rotate(90deg); }
+            50% { transform: translate(40px, 10px) rotate(180deg); }
+            75% { transform: translate(20px, -20px) rotate(270deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header/Hero section styling */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 4rem 1rem;
+            min-height: 80vh;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease forwards;
+            animation-delay: 0.2s;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, #2aff9e, #cc66ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(42, 255, 158, 0.3);
+            margin-bottom: 1rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            max-width: 800px;
+            margin-bottom: 2rem;
+            color: #c9b5ff;
+            min-height: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            word-break: break-word;
+        }
+
+        .subtitle-animation {
+            animation: subtitleFloat 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+            animation-delay: 0.8s;
+        }
+
+        @keyframes subtitleFloat {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) rotate(-5deg);
+            }
+            70% {
+                transform: scale(1.05) rotate(1deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        /* Stats counter section */
+        .stats-section {
+            display: flex;
+            justify-content: space-around;
+            margin: 2rem 0;
+            text-align: center;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            margin: 1rem;
+            padding: 1rem;
+            background: rgba(25, 15, 40, 0.4);
+            border-radius: 10px;
+            min-width: 200px;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(to right, #2aff9e, #cc66ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: #bfa6e0;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #2aff9e, #cc66ff);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(42, 255, 158, 0.5);
+            font-weight: bold;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: visible;
+            opacity: 1 !important;
+            animation: fadeInUp 0.8s ease 1.2s forwards;
+            animation-play-state: running !important;
+            margin-top: 1.5rem;
+            z-index: 10;
+            display: block;
+            visibility: visible;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(42, 255, 158, 0.8), 0 0 40px rgba(204, 102, 255, 0.6) inset;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:active {
+            transform: scale(0.98);
+        }
+
+        /* Pulse animation for button */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 15px rgba(42, 255, 158, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(42, 255, 158, 0.8), 0 0 40px rgba(204, 102, 255, 0.6) inset; }
+            100% { box-shadow: 0 0 15px rgba(42, 255, 158, 0.5); }
+        }
+
+        .cta-button.pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Ripple effect */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.7);
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(2.5);
+                opacity: 0;
+            }
+        }
+
+        /* Services section styling */
+        .services {
+            padding: 4rem 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease 0.5s forwards;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            background: linear-gradient(to right, #2aff9e, #cc66ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .service-card {
+            background: rgba(25, 15, 40, 0.6);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(42, 255, 158, 0.2);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .service-card:nth-child(1) { animation: fadeInUp 0.8s ease 0.7s forwards; }
+        .service-card:nth-child(2) { animation: fadeInUp 0.8s ease 0.9s forwards; }
+        .service-card:nth-child(3) { animation: fadeInUp 0.8s ease 1.1s forwards; }
+
+        .service-card:hover {
+            transform: scale(1.05) !important; /* Increase card size by 5% */
+            box-shadow: 0 10px 30px rgba(42, 255, 158, 0.5), 0 0 20px rgba(204, 102, 255, 0.4) inset;
+            border: 1px solid rgba(204, 102, 255, 0.5);
+            text-shadow: 0 0 10px rgba(204, 102, 255, 0.7);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .service-card:hover .card-icon {
+            color: #2aff9e; /* Change icon color only */
+        }
+
+        .card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #d9ffc2;
+            transition: color 0.3s ease;
+        }
+
+        .service-card:hover h3 {
+            color: #2aff9e;
+        }
+
+        .card p {
+            font-size: 1.1rem;
+            color: #bfa6e0;
+            line-height: 1.6;
+            transition: color 0.3s ease;
+        }
+
+        .service-card:hover p {
+            color: #e0fff2;
+        }
+
+        /* Portfolio section */
+        .portfolio {
+            padding: 4rem 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease 1.5s forwards;
+        }
+
+        .portfolio .section-title {
+            margin-bottom: 2rem;
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .portfolio-card {
+            background: rgba(25, 15, 40, 0.6);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(42, 255, 158, 0.2);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .portfolio-card:nth-child(1) { animation: fadeInUp 0.8s ease 1.7s forwards; }
+        .portfolio-card:nth-child(2) { animation: fadeInUp 0.8s ease 1.9s forwards; }
+        .portfolio-card:nth-child(3) { animation: fadeInUp 0.8s ease 2.1s forwards; }
+        .portfolio-card:nth-child(4) { animation: fadeInUp 0.8s ease 2.3s forwards; }
+        .portfolio-card:nth-child(5) { animation: fadeInUp 0.8s ease 2.5s forwards; }
+        .portfolio-card:nth-child(6) { animation: fadeInUp 0.8s ease 2.7s forwards; }
+
+        .portfolio-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(42, 255, 158, 0.5), 0 0 20px rgba(204, 102, 255, 0.4) inset;
+            border: 1px solid rgba(204, 102, 255, 0.5);
+        }
+
+        .portfolio-card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+            color: #d9ffc2;
+        }
+
+        .portfolio-card p {
+            font-size: 1rem;
+            color: #bfa6e0;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .portfolio-tech {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tech-tag {
+            background: rgba(204, 102, 255, 0.2);
+            color: #cc99ff;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .portfolio-btn {
+            background: linear-gradient(135deg, #2aff9e, #cc66ff);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .portfolio-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(204, 102, 255, 0.6);
+        }
+
+        /* Pricing section */
+        .pricing {
+            padding: 4rem 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease 3.0s forwards;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .pricing-card {
+            background: rgba(25, 15, 40, 0.6);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(42, 255, 158, 0.2);
+            opacity: 0;
+            transform: translateY(20px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pricing-card > * {
+            flex: 0 0 auto;
+        }
+
+        .pricing-card .pricing-btn {
+            margin-top: auto;
+        }
+
+        .pricing-card:nth-child(1) { animation: fadeInUp 0.8s ease 3.2s forwards; }
+        .pricing-card:nth-child(2) { animation: fadeInUp 0.8s ease 3.4s forwards; }
+        .pricing-card:nth-child(3) { animation: fadeInUp 0.8s ease 3.6s forwards; }
+
+        .pricing-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(42, 255, 158, 0.5), 0 0 20px rgba(204, 102, 255, 0.4) inset;
+            border: 1px solid rgba(204, 102, 255, 0.5);
+        }
+
+        .pricing-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .pricing-name {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #d9ffc2;
+        }
+
+        .pricing-price {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #2aff9e;
+            font-weight: bold;
+        }
+
+        .pricing-description {
+            font-size: 1rem;
+            color: #bfa6e0;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        .pricing-btn {
+            background: linear-gradient(135deg, #2aff9e, #cc66ff);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .pricing-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(204, 102, 255, 0.6);
+        }
+
+        /* Testimonials section */
+        .testimonials {
+            padding: 4rem 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease 4.0s forwards;
+        }
+
+        .testimonials-container {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 0;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .testimonials-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .testimonial-card {
+            background: rgba(25, 15, 40, 0.6);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(42, 255, 158, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .testimonial-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 30px rgba(42, 255, 158, 0.5), 0 0 20px rgba(204, 102, 255, 0.4) inset;
+            border: 1px solid rgba(204, 102, 255, 0.5);
+        }
+
+        .testimonial-header {
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-name {
+            font-size: 1.4rem;
+            color: #d9ffc2;
+            margin-bottom: 0.3rem;
+        }
+
+        .testimonial-role {
+            color: #bfa6e0;
+            font-size: 1rem;
+        }
+
+        .testimonial-text {
+            color: #d0c0f0;
+            font-style: italic;
+            margin: 1.5rem 0;
+            line-height: 1.6;
+        }
+
+        .testimonial-rating {
+            color: #2aff9e;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 0.3rem;
+        }
+
+        .sparkle {
+            color: #ffcc66;
+            animation: sparkle 2s infinite;
+        }
+
+        @keyframes sparkle {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        .testimonial-service {
+            background: rgba(204, 102, 255, 0.2);
+            color: #cc99ff;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-block;
+        }
+
+        .carousel-nav {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+
+        .carousel-btn {
+            background: linear-gradient(135deg, #2aff9e, #cc66ff);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.5rem;
+            box-shadow: 0 0 15px rgba(42, 255, 158, 0.5);
+        }
+
+        .carousel-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(204, 102, 255, 0.8);
+        }
+
+        /* FAQ section */
+        .faq {
+            padding: 4rem 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease 4.5s forwards;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            margin-bottom: 1rem;
+            background: rgba(25, 15, 40, 0.6);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(42, 255, 158, 0.2);
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background: rgba(204, 102, 255, 0.1);
+            box-shadow: 0 0 15px rgba(204, 102, 255, 0.3);
+        }
+
+        .faq-question h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #d9ffc2;
+        }
+
+        .faq-icon {
+            font-size: 1.5rem;
+            color: #cc66ff;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-answer {
+            padding: 0 1.5rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            color: #d0c0f0;
+            line-height: 1.6;
+        }
+
+        .faq-item.active .faq-answer {
+            padding: 0 1.5rem 1.5rem;
+            max-height: 500px;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(90deg);
+        }
+
+        /* Final CTA section */
+        .final-cta {
+            padding: 4rem 1rem;
+            text-align: center;
+            background: rgba(25, 15, 40, 0.4);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(42, 255, 158, 0.2);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease 5.0s forwards;
+        }
+
+        .final-cta h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #2aff9e, #cc66ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .final-cta p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #c9b5ff;
+        }
+
+        .summon-wizard {
+            background: linear-gradient(135deg, #2aff9e, #cc66ff);
+            color: white;
+            border: none;
+            padding: 1.2rem 3rem;
+            font-size: 1.3rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 25px rgba(42, 255, 158, 0.7), 0 0 40px rgba(204, 102, 255, 0.5) inset;
+            font-weight: bold;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        .summon-wizard::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .summon-wizard:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 35px rgba(42, 255, 158, 0.9), 0 0 50px rgba(204, 102, 255, 0.7) inset;
+        }
+
+        .summon-wizard:hover::before {
+            left: 100%;
+        }
+
+        .summon-wizard:active {
+            transform: scale(0.98);
+        }
+
+        /* Tooltip for final CTA */
+        .summon-wizard-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .summon-wizard-container .tooltip {
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 5, 20, 0.9);
+            color: #e0d0ff;
+            padding: 8px 12px;
+            border-radius: 5px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            border: 1px solid rgba(204, 102, 255, 0.5);
+            box-shadow: 0 0 15px rgba(204, 102, 255, 0.5);
+        }
+
+        .summon-wizard-container:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Footer styling */
+        .footer {
+            background: rgba(5, 2, 15, 0.8);
+            padding: 2rem;
+            text-align: center;
+            margin-top: 4rem;
+            opacity: 0;
+            animation: fadeIn 1s ease 5.5s forwards;
+        }
+
+        .footer p {
+            color: #a892c0;
+            font-size: 1.1rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .logo {
+                top: 10px;
+                left: 10px;
+                font-size: 1.2rem;
+            }
+            
+            .nav {
+                top: 10px;
+                right: 10px;
+            }
+            
+            .nav-link {
+                font-size: 0.9rem;
+                padding: 6px 12px;
+            }
+            
+            .hero h1 {
+                font-size: clamp(2rem, 8vw, 3rem);
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-section {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .stat-item {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            #particlesCanvas {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: clamp(1.5rem, 8vw, 2.5rem);
+            }
+            
+            .cta-button {
+                padding: 0.8rem 2rem;
+                font-size: 1rem;
+            }
+            
+            .summon-wizard {
+                width: 100%;
+                padding: 1rem 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particles canvas -->
+    <canvas id="particlesCanvas"></canvas>
+    
+    <!-- Logo with rabbit icon and tooltip -->
+    <a href="#" class="logo">
+        <svg class="rabbit-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C8.69 2 6 4.69 6 8c0 1.08.29 2.1.81 3H6c-.55 0-1 .45-1 1s.45 1 1 1h1.19c-.1.22-.19.46-.19.72 0 1.1.9 2 2 2s2-.9 2-2c0-.26-.09-.5-.19-.72H13c.55 0 1-.45 1-1s-.45-1-1-1h-.72c.52-1.9 2.35-3.28 4.5-3.28 2.49 0 4.5 2.01 4.5 4.5s-2.01 4.5-4.5 4.5c-.28 0-.55-.02-.81-.06.18-.48.29-1.01.29-1.56 0-2.21-1.79-4-4-4zm-1 14c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1zm4 0c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"/>
+        </svg>
+        Русачок и Ко
+        <span class="tooltip">Твой проект на вайбе</span>
+    </a>
+
+    <!-- Navigation link -->
+    <nav class="nav">
+        <a href="#" class="nav-link">О нас</a>
+    </nav>
+
+    <!-- Parallax background layers -->
+    <div class="parallax-container">
+        <div class="parallax-layer">
+            <div class="rune" style="top: 20%; left: 10%;">⚔️</div>
+            <div class="rune" style="top: 40%; left: 30%;">🔮</div>
+            <div class="rune" style="top: 60%; left: 70%;">📜</div>
+            <div class="rune" style="top: 80%; left: 20%;">🛡️</div>
+            <div class="rune" style="top: 10%; left: 80%;">✨</div>
+            <div class="rune" style="top: 50%; left: 50%;">⚔️</div>
+            <div class="rune" style="top: 30%; left: 60%;">🔮</div>
+            <div class="rune" style="top: 70%; left: 40%;">📜</div>
+        </div>
+        <div class="parallax-layer">
+            <div class="rune" style="top: 10%; left: 50%; font-size: 3rem;">🌀</div>
+            <div class="rune" style="top: 30%; left: 20%;">⚔️</div>
+            <div class="rune" style="top: 50%; left: 80%;">🔮</div>
+            <div class="rune" style="top: 70%; left: 60%;">🐉</div>
+            <div class="rune" style="top: 90%; left: 40%;">🛡️</div>
+            <div class="rune" style="top: 20%; left: 70%;">✨</div>
+            <div class="rune" style="top: 60%; left: 10%; font-size: 2.5rem;">🌀</div>
+            <div class="rune" style="top: 80%; left: 90%;">⚔️</div>
+        </div>
+        <div class="parallax-layer">
+            <div class="rune" style="top: 60%; left: 25%;">⚔️</div>
+            <div class="rune" style="top: 25%; left: 75%;">🔮</div>
+            <div class="rune" style="top: 75%; left: 55%;">📜</div>
+            <div class="rune" style="top: 45%; left: 15%;">🛡️</div>
+            <div class="rune" style="top: 85%; left: 85%;">✨</div>
+            <div class="rune" style="top: 15%; left: 25%;">⚔️</div>
+            <div class="rune" style="top: 35%; left: 45%;">🔮</div>
+            <div class="rune" style="top: 55%; left: 95%;">📜</div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="container">
+        <!-- Hero section with title and CTA -->
+        <section class="hero">
+            <h1>Вайб-кодинг от Русачок и Ко — магия, доступная каждому</h1>
+            <div class="hero-subtitle">
+                <span class="subtitle-animation">Сайты, боты, интеграции.<br>В древнем стеке Flask и с магическим вайбом.</span>
+            </div>
+            
+            <!-- Stats counter section -->
+            <div class="stats-section">
+                <div class="stat-item">
+                    <span class="stat-number" id="projects-counter">0</span>
+                    <div class="stat-label">⚡ Сделано магических проектов</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="hours-counter">0</span>
+                    <div class="stat-label">🔥 Сэкономлено часов</div>
+                </div>
+            </div>
+            
+            <button class="cta-button pulse" onclick="showOrderForm()">Заказать магию</button>
+        </section>
+
+        <!-- Services section with cards -->
+        <section class="services">
+            <h2 class="section-title">Наши магические услуги</h2>
+            <div class="cards-container">
+                <!-- Service 1: Landing-page -->
+                <div class="service-card">
+                    <div class="card-icon">🐉</div>
+                    <h3>Лендинг-гримуар</h3>
+                    <p>Сайт для твоего заклинания (бизнеса). Магический лендинг, который привлекает клиентов заклинаниями UX/UI и древними технологиями.</p>
+                </div>
+                
+                <!-- Service 2: AI Bot -->
+                <div class="service-card">
+                    <div class="card-icon">🔥</div>
+                    <h3>Бот-хранитель</h3>
+                    <p>Telegram-бот с ИИ, который хранит покой в твоем бизнесе. Автоматизация, ответы на вопросы, продажи — всё в одном магическом существе.</p>
+                </div>
+                
+                <!-- Service 3: Refactoring -->
+                <div class="service-card">
+                    <div class="card-icon">⚡</div>
+                    <h3>Вайб-доработка</h3>
+                    <p>Оживление старого кода. Даём новую жизнь твоему проекту с вайбом, современными практиками и магией рефакторинга.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Portfolio section -->
+        <section class="portfolio">
+            <h2 class="section-title">Магические кейсы</h2>
+            <div class="portfolio-grid">
+                <!-- Portfolio item 1 - Updated -->
+                <div class="portfolio-card">
+                    <h3>Гримуар травника</h3>
+                    <p>Интернет-магазин по продаже элитного чая для волшебников</p>
+                    <div class="portfolio-tech">
+                        <span class="tech-tag">Flask</span>
+                        <span class="tech-tag">Вайб</span>
+                        <span class="tech-tag">ИИ</span>
+                    </div>
+                    <button class="portfolio-btn" onclick="showPlaceholder()">Увидеть магию</button>
+                </div>
+                
+                <!-- Portfolio item 2 - Updated -->
+                <div class="portfolio-card">
+                    <h3>Бот "Железный дровосек"</h3>
+                    <p>Telegram-бот для заказа дров с доставкой за волшебные сроки</p>
+                    <div class="portfolio-tech">
+                        <span class="tech-tag">Flask</span>
+                        <span class="tech-tag">AI</span>
+                        <span class="tech-tag">Telegram</span>
+                    </div>
+                    <button class="portfolio-btn" onclick="showPlaceholder()">Увидеть магию</button>
+                </div>
+                
+                <!-- Portfolio item 3 -->
+                <div class="portfolio-card">
+                    <h3>Алхимический калькулятор</h3>
+                    <p>Система для расчета пропорций ингредиентов для зелий</p>
+                    <div class="portfolio-tech">
+                        <span class="tech-tag">Flask</span>
+                        <span class="tech-tag">Вайб</span>
+                        <span class="tech-tag">ИИ</span>
+                    </div>
+                    <button class="portfolio-btn" onclick="showPlaceholder()">Увидеть магию</button>
+                </div>
+                
+                <!-- Portfolio item 4 -->
+                <div class="portfolio-card">
+                    <h3>Заклинатель чатов</h3>
+                    <p>Telegram-бот для управления сообществами волшебников</p>
+                    <div class="portfolio-tech">
+                        <span class="tech-tag">Flask</span>
+                        <span class="tech-tag">AI</span>
+                        <span class="tech-tag">Вайб</span>
+                    </div>
+                    <button class="portfolio-btn" onclick="showPlaceholder()">Увидеть магию</button>
+                </div>
+                
+                <!-- Portfolio item 5 -->
+                <div class="portfolio-card">
+                    <h3>Магический CRM</h3>
+                    <p>Система управления клиентами для гильдий магов</p>
+                    <div class="portfolio-tech">
+                        <span class="tech-tag">Flask</span>
+                        <span class="tech-tag">Вайб</span>
+                        <span class="tech-tag">ИИ</span>
+                    </div>
+                    <button class="portfolio-btn" onclick="showPlaceholder()">Увидеть магию</button>
+                </div>
+                
+                <!-- Portfolio item 6 -->
+                <div class="portfolio-card">
+                    <h3>Предсказатель погоды</h3>
+                    <p>Сайт с точными прогнозами от древнего оракула</p>
+                    <div class="portfolio-tech">
+                        <span class="tech-tag">Flask</span>
+                        <span class="tech-tag">AI</span>
+                        <span class="tech-tag">Вайб</span>
+                    </div>
+                    <button class="portfolio-btn" onclick="showPlaceholder()">Увидеть магию</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing section -->
+        <section class="pricing">
+            <h2 class="section-title">Стоимость магии</h2>
+            <div class="pricing-grid">
+                <!-- Pricing tier 1 -->
+                <div class="pricing-card">
+                    <div class="pricing-icon">🔮</div>
+                    <h3 class="pricing-name">Искра</h3>
+                    <div class="pricing-price">от 30 000 ₽</div>
+                    <p class="pricing-description">Экспресс-лендинг с уникальным дизайном и базовой функциональностью</p>
+                    <button class="pricing-btn" onclick="selectPackage('Искра')">Исполнить повеление</button>
+                </div>
+                
+                <!-- Pricing tier 2 -->
+                <div class="pricing-card">
+                    <div class="pricing-icon">⚡</div>
+                    <h3 class="pricing-name">Шторм</h3>
+                    <div class="pricing-price">от 80 000 ₽</div>
+                    <p class="pricing-description">Telegram-бот с ИИ + админ-панель + интеграции с CRM</p>
+                    <button class="pricing-btn" onclick="selectPackage('Шторм')">Исполнить повеление</button>
+                </div>
+                
+                <!-- Pricing tier 3 -->
+                <div class="pricing-card">
+                    <div class="pricing-icon">🐉</div>
+                    <h3 class="pricing-name">Катаклизм</h3>
+                    <div class="pricing-price">цена договорная</div>
+                    <p class="pricing-description">Полный цикл разработки: от идеи до вайб-архитектуры, с поддержкой</p>
+                    <button class="pricing-btn" onclick="selectPackage('Катаклизм')">Исполнить повеление</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials section -->
+        <section class="testimonials">
+            <h2 class="section-title">Слова клиентов, узревших магию</h2>
+            <div class="testimonials-container">
+                <div class="testimonials-grid" id="testimonialsGrid">
+                    <!-- Testimonial 1 -->
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <div class="testimonial-name">Елена, хранительница стартапа</div>
+                        </div>
+                        <div class="testimonial-text">
+                            Вайб-кодеры превзошли все мои ожидания! Бот для управления задачами получился настолько интуитивным, что команда начала использовать его с первого дня. Волшебная скорость и качество!
+                        </div>
+                        <div class="testimonial-rating">
+                            <span class="sparkle">✦</span>
+                            <span class="sparkle">✦</span>
+                            <span class="sparkle">✦</span>
+                            <span class="sparkle">✦</span>
+                            <span class="sparkle">✦</span>
+                        </div>
+                        <div class="testimonial-service">Бот-хранитель</div>
+                    </div>
+                    
+                    <!-- Testimonial 2 -->
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <div class="testimonial-name">Алексей, маг торговли</div>
+                        </div>
+                        <div class="testimonial-text">
+                            Лендинг, созданный Русачок и Ко, стал настоящим волшебным порталом для моего магазина. Конверсии выросли в 3 раза, и дизайн выглядит как настоящее произведение волшебного искусства.
+                        </div>
+                        <div class="testimonial-rating">
+                            <span class="sparkle">✦</span>
+                            <span class="sparkle">✦</span>
+                            <span class="sparkle">✦</span>
+                            <span class="sparkle">✦</span>
+                            <span class="sparkle">✦</span>
+                        </div>
+                        <div class="testimonial-service">Лендинг-гримуар</div>
+                    </div>
+                    
+                    <!-- Testimonial 3 -->
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <div class="testimonial-name">Мария, заклинательница кода</div>
+                        </div>
+                        <div class="testimonial-text">
+                            Спасибо за восстановление моего старого проекта! Вайб-доработка вернула ему вторую жизнь. Код стал чище, быстрее, и даже дух старых магов в нём ощущается.
+                        </div>
+                        <div class="testimonial-rating">
+                            <span class="sparkle">✦</span>
+                            <span class="sparkle">✦</span>
+                            <span class="sparkle">✦</span>
+                            <span class="sparkle">✦</span>
+                            <span class="sparkle">✦</span>
+                        </div>
+                        <div class="testimonial-service">Вайб-доработка</div>
+                    </div>
+                    
+                    <!-- Testimonial 4 -->
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <div class="testimonial-name">Дмитрий, повелитель ИИ</div>
+                        </div>
+                        <div class="testimonial-text">
+                            Интеграция ИИ с Flask-приложением была выполнена безупречно. Русачок и Ко не просто код написали, они создали настоящую магию, которая работает на каждом пикселе.
+                        </div>
+                        <div class="testimonial-rating">
+                            <span class="sparkle">✦</span>
+                            <span class="sparkle">✦</span>
+                            <span class="sparkle">✦</span>
+                            <span class="sparkle">✦</span>
+                            <span class="sparkle">✦</span>
+                        </div>
+                        <div class="testimonial-service">Вайб-доработка</div>
+                    </div>
+                    
+                    <!-- Testimonial 5 -->
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <div class="testimonial-name">Ольга, волшебница интерфейсов</div>
+                        </div>
+                        <div class="testimonial-text">
+                            Пользоваться продуктом стало одно удовольствие. Русачок и Ко создали не просто сайт, а настоящее цифровое пространство с душой и вайбом. Клиенты в восторге!
+                        </div>
+                        <div class="testimonial-rating">
+                            <span class="sparkle">✦</span>
+                            <span class="sparkle">✦</span>
+                            <span class="sparkle">✦</span>
+                            <span class="sparkle">✦</span>
+                            <span class="sparkle">✦</span>
+                        </div>
+                        <div class="testimonial-service">Лендинг-гримуар</div>
+                    </div>
+                    
+                    <!-- Testimonial 6 -->
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <div class="testimonial-name">Виктор, мастер автоматизации</div>
+                        </div>
+                        <div class="testimonial-text">
+                            Бот, созданный для нашего чата, стал незаменимым помощником. Отвечает за меня, когда я занят. Профессиональная работа, вайб-подход, отличный результат!
+                        </div>
+                        <div class="testimonial-rating">
+                            <span class="sparkle">✦</span>
+                            <span class="sparkle">✦</span>
+                            <span class="sparkle">✦</span>
+                            <span class="sparkle">✦</span>
+                            <span class="sparkle">✦</span>
+                        </div>
+                        <div class="testimonial-service">Бот-хранитель</div>
+                    </div>
+                </div>
+                
+                <div class="carousel-nav">
+                    <button class="carousel-btn" id="prevBtn">&#8249;</button>
+                    <button class="carousel-btn" id="nextBtn">&#8250;</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ section -->
+        <section class="faq">
+            <h2 class="section-title">Свиток знаний (FAQ)</h2>
+            <div class="faq-container">
+                <!-- FAQ Item 1 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Сколько времени занимает магия?</h3>
+                        <div class="faq-icon">▶</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Лендинг: 3–5 дней. Бот: 5–10 дней. Время зависит от сложности реализации и количества интеграций.</p>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 2 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Flask — это надёжно для бизнеса?</h3>
+                        <div class="faq-icon">▶</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Да, лёгкий, быстрый, проверенный стек. Flask идеально подходит для большинства бизнес-задач и легко масштабируется.</p>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 3 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Что такое вайб-кодинг в услугах?</h3>
+                        <div class="faq-icon">▶</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Мы пишем код в состоянии потока, с удовольствием и душой. Это позволяет создавать более качественные и интуитивные решения.</p>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 4 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Есть ли поддержка после сдачи?</h3>
+                        <div class="faq-icon">▶</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Да, месяц магической поддержки бесплатно. Мы гарантируем стабильную работу ваших решений.</p>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 5 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Работаете с ИИ?</h3>
+                        <div class="faq-icon">▶</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Да, интеграции ChatGPT, нейросетей и магии. Наши решения включают современные ИИ-технологии.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final CTA section -->
+        <section class="final-cta">
+            <h2>Готов впустить магию в свой проект?</h2>
+            <p>Расскажи о своей идее — мы оживим её в коде</p>
+            <div class="summon-wizard-container">
+                <button class="summon-wizard" onclick="showOrderForm()">Призвать чародея</button>
+                <span class="tooltip">Напиши нам</span>
+            </div>
+        </section>
+
+        <!-- Footer with contacts -->
+        <footer class="footer">
+            <p>© 2026 Русачок и Ко — Магическая лицензия</p>
+            <p>Служба поддержки: magic@rusachok.co | Телеграм: @rusachok_magic</p>
+        </footer>
+    </div>
+
+    <script>
+        // Counter animation function
+        function animateValue(id, start, end, duration) {
+            const obj = document.getElementById(id);
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.textContent = Math.floor(progress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                } else {
+                    obj.textContent = end;
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // Setup intersection observer for counters
+        const countersObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateValue('projects-counter', 0, 47, 2000);
+                    animateValue('hours-counter', 0, 312, 2000);
+                    countersObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        countersObserver.observe(document.querySelector('.hero'));
+
+        // Order form function for the CTA button
+        function showOrderForm() {
+            const name = prompt("Введите ваше имя:");
+            if (name === null) return; // User cancelled
+            
+            const email = prompt("Введите ваш email:");
+            if (email === null) return; // User cancelled
+            
+            const serviceOptions = [
+                "Лендинг-гримуар",
+                "Бот-хранитель", 
+                "Вайб-доработка",
+                "Консультация"
+            ];
+            
+            let serviceList = "Выберите тип услуги:\n";
+            serviceOptions.forEach((option, index) => {
+                serviceList += `${index + 1}. ${option}\n`;
+            });
+            
+            const serviceChoice = prompt(serviceList + "\nВведите номер или название услуги:");
+            if (serviceChoice === null) return; // User cancelled
+            
+            const description = prompt("Опишите вашу задачу:");
+            if (description === null) return; // User cancelled
+            
+            // Send data to Flask backend (simulated)
+            console.log("Заказ магии:", {
+                name: name,
+                email: email,
+                service: serviceChoice,
+                description: description
+            });
+            
+            // In a real Flask app, this would be sent via fetch/AJAX to backend
+            alert(`Скоро свяжемся, избранный!\n\nВы заказали: ${serviceChoice}\nОписание: ${description}`);
+        }
+
+        // Function to select a package from pricing
+        function selectPackage(packageName) {
+            alert(`Вы выбрали пакет "${packageName}". Мы свяжемся с вами для обсуждения деталей.`);
+        }
+
+        // Placeholder function for portfolio buttons
+        function showPlaceholder() {
+            alert("Это пример выполненной работы. В реальном проекте здесь будет ссылка на сайт.");
+        }
+
+        // Testimonials Carousel
+        document.addEventListener('DOMContentLoaded', function() {
+            const testimonialsGrid = document.getElementById('testimonialsGrid');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            let currentIndex = 0;
+            const testimonialCards = document.querySelectorAll('.testimonial-card');
+            const totalCards = testimonialCards.length;
+            const cardsPerPage = window.matchMedia("(min-width: 1024px)").matches ? 3 : 
+                                window.matchMedia("(min-width: 768px)").matches ? 2 : 1;
+            
+            // Update cards per page on resize
+            window.addEventListener('resize', function() {
+                cardsPerPage = window.matchMedia("(min-width: 1024px)").matches ? 3 : 
+                              window.matchMedia("(min-width: 768px)").matches ? 2 : 1;
+                updateCarousel();
+            });
+            
+            // Auto-rotate every 5 seconds
+            let autoRotate = setInterval(showNextTestimonial, 5000);
+            
+            // Pause auto-rotate on hover
+            testimonialsGrid.addEventListener('mouseenter', () => {
+                clearInterval(autoRotate);
+            });
+            
+            testimonialsGrid.addEventListener('mouseleave', () => {
+                autoRotate = setInterval(showNextTestimonial, 5000);
+            });
+            
+            function showNextTestimonial() {
+                currentIndex = (currentIndex + cardsPerPage) % totalCards;
+                updateCarousel();
+            }
+            
+            function showPrevTestimonial() {
+                currentIndex = (currentIndex - cardsPerPage + totalCards) % totalCards;
+                updateCarousel();
+            }
+            
+            function updateCarousel() {
+                // Hide all cards
+                testimonialCards.forEach(card => {
+                    card.style.display = 'none';
+                });
+                
+                // Show the current cards
+                for (let i = 0; i < cardsPerPage; i++) {
+                    const index = (currentIndex + i) % totalCards;
+                    testimonialCards[index].style.display = 'block';
+                }
+            }
+            
+            // Initially show the first set of testimonials
+            updateCarousel();
+            
+            // Event listeners for navigation buttons
+            nextBtn.addEventListener('click', showNextTestimonial);
+            prevBtn.addEventListener('click', showPrevTestimonial);
+        });
+
+        // FAQ Accordion
+        document.addEventListener('DOMContentLoaded', function() {
+            const faqItems = document.querySelectorAll('.faq-item');
+            
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                
+                question.addEventListener('click', () => {
+                    // Close all other items
+                    faqItems.forEach(otherItem => {
+                        if (otherItem !== item) {
+                            otherItem.classList.remove('active');
+                        }
+                    });
+                    
+                    // Toggle current item
+                    item.classList.toggle('active');
+                });
+            });
+        });
+
+        // Particles canvas animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('particlesCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas to full window size
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+            
+            // Particle class
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2 + 1;
+                    this.speedX = Math.random() * 1 - 0.5;
+                    this.speedY = Math.random() * 1 - 0.5;
+                    this.color = this.getRandomColor();
+                }
+                
+                getRandomColor() {
+                    const colors = ['#2aff9e', '#cc66ff', '#ffcc66'];
+                    return colors[Math.floor(Math.random() * colors.length)];
+                }
+                
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    
+                    if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
+                    if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+                }
+                
+                draw() {
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+            }
+            
+            // Create particles
+            const particles = [];
+            const particleCount = window.innerWidth < 768 ? 50 : 100;
+            
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+            
+            // Draw connections between close particles
+            function connectParticles() {
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < 100) {
+                            const opacity = 1 - (distance / 100);
+                            ctx.strokeStyle = `rgba(204, 102, 255, ${opacity})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+            
+            // Mouse interaction
+            const mouse = {
+                x: null,
+                y: null,
+                radius: 100
+            };
+            
+            canvas.addEventListener('mousemove', function(e) {
+                mouse.x = e.x;
+                mouse.y = e.y;
+            });
+            
+            canvas.addEventListener('mouseleave', function() {
+                mouse.x = null;
+                mouse.y = null;
+            });
+            
+            // Animation loop
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Update and draw particles
+                for (let i = 0; i < particles.length; i++) {
+                    particles[i].update();
+                    
+                    // Mouse repulsion
+                    if (mouse.x !== null && mouse.y !== null) {
+                        const dx = mouse.x - particles[i].x;
+                        const dy = mouse.y - particles[i].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < mouse.radius) {
+                            const force = (mouse.radius - distance) / mouse.radius;
+                            const angle = Math.atan2(dy, dx);
+                            particles[i].x -= Math.cos(angle) * force * 5;
+                            particles[i].y -= Math.sin(angle) * force * 5;
+                        }
+                    }
+                    
+                    particles[i].draw();
+                }
+                
+                connectParticles();
+                requestAnimationFrame(animate);
+            }
+            
+            animate();
+        });
+
+        // Parallax effect for mouse movement
+        document.addEventListener('mousemove', (e) => {
+            const layers = document.querySelectorAll('.parallax-layer');
+            const x = (window.innerWidth - e.pageX) / 50;
+            const y = (window.innerHeight - e.pageY) / 50;
+
+            layers.forEach((layer, index) => {
+                const speed = (index + 1) * 0.2;
+                const posX = x * speed;
+                const posY = y * speed;
+
+                layer.style.transform = `translate(${posX}px, ${posY}px)`;
+            });
+        });
+
+        // Staggered reveal on scroll using Intersection Observer
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observe the sections
+        document.querySelectorAll('.hero, .services, .portfolio, .pricing, .testimonials, .faq, .final-cta, .footer, .service-card, .cta-button, .portfolio-card, .pricing-card, .testimonial-card, .faq-item').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
